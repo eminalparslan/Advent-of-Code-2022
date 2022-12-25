@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -52,30 +53,53 @@ func main() {
 		return
 	}
 
-	indices := []int{}
+	pairs := []*list{
+		{
+			val: -2, children: []*list{
+				{
+					val: -2, children: []*list{
+						{val: 2},
+					},
+				},
+			},
+		},
+		{
+			val: -2, children: []*list{
+				{
+					val: -2, children: []*list{
+						{val: 6},
+					},
+				},
+			},
+		},
+	}
 
-	for i := 1; scanner.Scan(); i++ {
+	for scanner.Scan() {
 		left := bufio.NewScanner(strings.NewReader(scanner.Text()))
 		left.Split(split)
 		left.Scan()
-		leftList := parse(left)
+		pairs = append(pairs, parse(left))
 		scanner.Scan()
 		right := bufio.NewScanner(strings.NewReader(scanner.Text()))
 		right.Split(split)
 		right.Scan()
-		rightList := parse(right)
-		if res, _ := compare(leftList, rightList); res {
-			indices = append(indices, i)
-		}
+		pairs = append(pairs, parse(right))
 		scanner.Scan()
 	}
 
-	sum := 0
-	for _, i := range indices {
-		sum += i
+	sort.Slice(pairs, func(i, j int) bool {
+		res, _ := compare(pairs[i], pairs[j])
+		return res
+	})
+
+	res := 1
+	for i, l := range pairs {
+		if l.val == -2 {
+			res *= i + 1
+		}
 	}
 
-	fmt.Printf("Sum: %d\n", sum)
+	fmt.Printf("Result: %d\n", res)
 }
 
 func parse(scanner *bufio.Scanner) *list {
