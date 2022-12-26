@@ -10,23 +10,51 @@ import (
 )
 
 func main() {
-	file, err := os.Open("testInput.txt")
+	file, err := os.Open("input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
+	// set for x's at y = 2000000 that can't contain a beacon
+	excluded := map[int]bool{}
+	// set of sensors and beacons
+	sensorsAndBeacons := map[int]bool{}
+
+	const targetY = 2_000_000
 
 	for scanner.Scan() {
 		_, after, _ := strings.Cut(scanner.Text(), "Sensor at ")
-		signal, beacon, _ := strings.Cut(after, ": closest beacon is at ")
-		sX, sY := parseCoords(signal)
+		sensor, beacon, _ := strings.Cut(after, ": closest beacon is at ")
+		sX, sY := parseCoords(sensor)
 		bX, bY := parseCoords(beacon)
+		if sY == targetY {
+			sensorsAndBeacons[sX] = true
+		}
+		if bY == targetY {
+			sensorsAndBeacons[bX] = true
+		}
 		dist := abs(sX-bX) + abs(sY-bY)
+		diffY := abs(sY - targetY)
+		if diffY <= dist {
+			n := dist - diffY
+			for i := 0; i <= n; i++ {
+				excluded[sX+i] = true
+				excluded[sX-i] = true
+			}
+		}
 	}
 
-	fmt.Printf("Hello world\n")
+	res := len(excluded)
+
+	for k := range excluded {
+		if _, ok := sensorsAndBeacons[k]; ok {
+			res--
+		}
+	}
+
+	fmt.Printf("Result: %d\n", res)
 }
 
 func parseCoords(s string) (x, y int) {
