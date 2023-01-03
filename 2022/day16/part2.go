@@ -62,7 +62,7 @@ const maxIntVal = int(^uint(0) >> 1)
 ///////// Main ///////////////////
 
 func main() {
-	file, err := os.Open("input.txt")
+	file, err := os.Open("testInput.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -122,8 +122,13 @@ func main() {
 	// to reset visited field
 	resetDistances(&vertices)
 
-	res := solve(start, 30)
-	fmt.Printf("Result: %d\n", res)
+	res1 := solve1(start, 30)
+	res2 := solve2(start, start, 26, 26)
+	max := res1
+	if res2 > max {
+		max = res2
+	}
+	fmt.Printf("Result: %d\n", max)
 
 	// for _, v := range vertices {
 	// 	fmt.Printf("%s: ", v.name)
@@ -197,7 +202,7 @@ func calculateDistances(vertices *map[string]*vertex) {
 	}
 }
 
-func solve(curVertex *vertex, timeLeft int) int {
+func solve1(curVertex *vertex, timeLeft int) int {
 	// base case: return 0 when time is out or vertex was already visited
 	if timeLeft <= 0 || curVertex.visited {
 		return 0
@@ -208,14 +213,42 @@ func solve(curVertex *vertex, timeLeft int) int {
 
 	curVertex.visited = true
 	maxPressure := 0
-	// iterate through all other vertices, recursively finding maximum pressure released
+	// iterte through all other vertices, recursively finding maximum pressure released
 	for nextVertex, distance := range curVertex.distances {
-		nextPressure := solve(nextVertex, timeLeft-distance-1)
+		nextPressure := solve1(nextVertex, timeLeft-distance-1)
 		if nextPressure > maxPressure {
 			maxPressure = nextPressure
 		}
 	}
 	curVertex.visited = false
+
+	pressure += maxPressure
+	return pressure
+}
+
+// takes like ~5 mins to calculate lol
+func solve2(vertex1, vertex2 *vertex, timeLeft1, timeLeft2 int) int {
+	if timeLeft1 <= 0 || vertex1.visited || timeLeft2 <= 0 || vertex2.visited {
+		return 0
+	}
+
+	pressure := vertex1.rate*timeLeft1 + vertex2.rate*timeLeft2
+
+	vertex1.visited = true
+	vertex2.visited = true
+	maxPressure := 0
+	for nextVertex1, distance1 := range vertex1.distances {
+		for nextVertex2, distance2 := range vertex2.distances {
+			if nextVertex1 != nextVertex2 {
+				nextPressure := solve2(nextVertex1, nextVertex2, timeLeft1-distance1-1, timeLeft2-distance2-1)
+				if nextPressure > maxPressure {
+					maxPressure = nextPressure
+				}
+			}
+		}
+	}
+	vertex1.visited = false
+	vertex2.visited = false
 
 	pressure += maxPressure
 	return pressure
