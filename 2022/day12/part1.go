@@ -7,11 +7,11 @@ import (
 	"os"
 )
 
-type Vertex struct {
+type vertex struct {
 	height   byte
 	distance int
 	visited  bool
-	edges    []*Vertex
+	edges    []*vertex
 }
 
 const maxIntVal = int(^uint(0) >> 1)
@@ -33,9 +33,9 @@ func main() {
 	startRow, startCol := 0, 0
 	endRow, endCol := 0, 0
 
-	graph := make([][]Vertex, len(heightmap))
+	graph := make([][]vertex, len(heightmap))
 	for r := range heightmap {
-		graph[r] = make([]Vertex, len(heightmap[0]))
+		graph[r] = make([]vertex, len(heightmap[0]))
 		for c, h := range heightmap[r] {
 			if h == 'S' {
 				graph[r][c].height = 'a'
@@ -67,10 +67,10 @@ func main() {
 		}
 	}
 
-	pq := []*Vertex{}
+	pq := []*vertex{}
 	pq = append(pq, &graph[startRow][startCol])
 
-	var v *Vertex
+	var v *vertex
 	for len(pq) != 0 {
 		v, pq = pq[0], pq[1:]
 		for _, e := range v.edges {
