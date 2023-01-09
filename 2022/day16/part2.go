@@ -228,6 +228,7 @@ func solve1(curVertex *vertex, timeLeft int) int {
 
 // takes like ~5 mins to calculate lol
 func solve2(vertex1, vertex2 *vertex, timeLeft1, timeLeft2 int) int {
+	// don't think this is right, probably got lucky with the answer
 	if timeLeft1 <= 0 || vertex1.visited || timeLeft2 <= 0 || vertex2.visited {
 		return 0
 	}
