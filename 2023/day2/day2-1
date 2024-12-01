@@ -1,0 +1,9 @@
+:%s/\v(\d+) red/\=submatch(1)>12?'XYZ':submatch(0)/g
+:%s/\v(\d+) green/\=submatch(1)>13?'XYZ':submatch(0)/g
+:%s/\v(\d+) blue/\=submatch(1)>14?'XYZ':submatch(0)/g
+:g/XYZ/d
+:%s/\vGame (\d+):.*/\1
+:%s/\n/+
+$x
+"add
+i=a

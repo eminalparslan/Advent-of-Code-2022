@@ -1,0 +1,10 @@
+:let x = {'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6, 'seven': 7, 'eight': 8, 'nine': 9}
+:%s/\(\d\|one\|two\|three\|four\|five\|six\|seven\|eight\|nine\)/\=submatch(1)=~#'\d'?submatch(1):x[submatch(1)]/
+:%s/.*\zs\(one\|two\|three\|four\|five\|six\|seven\|eight\|nine\)/\=x[submatch(1)]/
+:%s/\D//g
+:%s/^\d\zs\d\+\ze\d$//
+:%s/^\d$/&&
+:%s/\n/+
+$x
+"add
+i=a

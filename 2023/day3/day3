@@ -1,0 +1,9 @@
+:set nowrapscan
+gg0GI.yyPVr.GyypVr.$ggA.0Ostartjqq/\d\+
+viwmaviwohk`ajlygg02kPV2jgJ`aq9999@q:set wrapscan
+/start
+dG:v/[^\.0-9]/d _
+:%s/[^0-9]//g
+:%s/\n\%($\)\@!/+
+c$="
+
